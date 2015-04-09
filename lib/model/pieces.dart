@@ -1,6 +1,6 @@
 part of finalproject;
 
-class Spaceship extends MovablePiece {  
+class Spaceship extends MovablePiece {
   Spaceship() {
     randomInit();
     width = 70;
@@ -12,7 +12,7 @@ class Spaceship extends MovablePiece {
   }
 }
 
-class Laser extends MovablePiece {  
+class Laser extends MovablePiece {
   Laser() {
     randomInit();
     width = 4;
@@ -26,25 +26,9 @@ class Laser extends MovablePiece {
     usesAudio = true;
   }
 }
-class YellowLine extends MovablePiece {
-  YellowLine(int id) {
-    x = 200;
-    //y = 50;
-    width = 15;
-    height = 50;
-    color.main = 'yellow';
-    color.border = 'yellow';
-    speed.dy = 6;
-    shape = PieceShape.RECT;
-  }
-  
-  moveDown(){
-    y += speed.dy;
-  }
- }
 
-class Cloud extends MovablePiece {  
-  Cloud(int id) {
+class Cloud extends MovablePiece {
+  Cloud(int id): super(id) {
     randomInit();
     width = 80;
     height = 56;
@@ -53,8 +37,8 @@ class Cloud extends MovablePiece {
   }
 }
 
-class Creature extends MovablePiece {  
-  Creature(int id) {
+class Creature extends MovablePiece {
+  Creature(int id): super(id) {
     randomExtraInit();
     width = 48;
     height = 64;
@@ -63,11 +47,11 @@ class Creature extends MovablePiece {
     }
     if (dx >= dy) {
       dx = dy - 1;
-    } 
+    }
     y = -y;
     var ri = randomInt(7);
     isTagged = false;
-    dx = randomSign(ri) * dx; 
+    dx = randomSign(ri) * dx;
     shape = PieceShape.IMG;
     imgId = 'creature';
   }
@@ -77,9 +61,8 @@ class Clouds extends MovablePieces {
   Clouds(int count): super(count);
 
   createMovablePieces(int count) {
-    var id = 0;
-    for (var i = 0; i < count; i++) {
-      add(new Cloud(++id));
+    for (var i = 1; i <= count; i++) {
+      add(new Cloud(i));
     }
   }
 }
@@ -88,34 +71,67 @@ class Creatures extends MovablePieces {
   Creatures(int count): super(count);
 
   createMovablePieces(int count) {
-    var id = 0;
-    for (var i = 0; i < count; i++) {
-      add(new Creature(++id));
+    for (var i = 1; i <= count; i++) {
+      add(new Creature(i));
     }
   }
 }
+
+class YellowLine extends MovablePiece {
+  YellowLine nextLine;
+
+  YellowLine(int id): super(id) {
+    width = 15;
+    height = 50;
+    color.main = 'yellow';
+    color.border = 'yellow';
+    speed.dy = 4;
+    shape = PieceShape.RECT;
+  }
+
+  calcY() {
+    if (nextLine == null) {
+      y = -height;
+    } else {
+      y = nextLine.y - height * 1.5;
+    }
+  }
+ }
 
 class YellowLines extends MovablePieces {
   YellowLines(int count): super(count);
 
   createMovablePieces(int count) {
-    var id = 0;
-    for (var i = 0; i < count; i++) {
-      var ligne = new YellowLine(++id);
-      if (i == 0) {
-        ligne.y = 20;
-      }else if(i == 1){
-        ligne.y == 100;
-      }else if(i == 2){
-        ligne.y == 200;
-      }else if(i == 3){
-        ligne.y == 300;
-      }else if(i == 4){
-        ligne.y == 400;
-      }else if(i == 5){
-        ligne.y == 500;
-      }
-      add(ligne);
+    var nextLine = new YellowLine(0);
+    nextLine.y = -nextLine.height;
+    var currentLine;
+    for (var i = 1; i < count; i++) {
+      currentLine = new YellowLine(i);
+      currentLine.nextLine = nextLine;
+      nextLine = currentLine;
+      add(currentLine);
     }
-  } 
+  }
+
+  calcY() {
+    for (var line in this) {
+      if (line.nextLine == null) {
+        line.y = -line.height;
+      }
+    }
+    for (var line in this) {
+      if (line.nextLine != null) {
+        line.y = line.nextLine.y - line.height * 1.5;
+      }
+    }
+  }
+
+  moveDown() {
+    for (var line in this) {
+      line.y += line.speed.dy;
+      if (line.y > line.space.height) {
+        line.calcY();
+      }
+    }
+  }
 }

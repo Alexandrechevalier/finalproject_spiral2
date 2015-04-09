@@ -3,17 +3,17 @@ part of finalproject;
 class Board extends Surface {
   MovablePieces clouds, creatures;
   MovablePiece laser, spaceship;
-  YellowLines yellowLines; 
+  YellowLines yellowLines;
   AudioElement hitSound;
  // VideoElement invaderVideo; SURMENT A SUPP
-  
-  Board(CanvasElement canvas): super(canvas) {  
+
+  Board(CanvasElement canvas): super(canvas) {
     clouds = new Clouds(5);
     creatures = new Creatures(7);
     spaceship = new Spaceship();
-    yellowLines = new YellowLines(5);
+    yellowLines = new YellowLines(9);
     laser = new Laser();
-    hitSound = document.querySelector('#${laser.audioId}');   
+    hitSound = document.querySelector('#${laser.audioId}');
    // invaderVideo = document.querySelector('#${spaceship.videoId}'); SURMENT A SUPP
    // invaderVideo.hidden = true; SURMENT A SUPP
     canvas.onMouseMove.listen((MouseEvent e) {
@@ -25,31 +25,36 @@ class Board extends Surface {
       laser.y = e.offset.y - spaceship.height;
       laser.isVisible = true;
     });
+
+    yellowLines.forEach((YellowLine yellowLine) {
+      yellowLine.space = area;
+      yellowLine.x = yellowLine.space.width / 2;
+    });
+    yellowLines.calcY();
   }
-  
+
   background() {
     context
-        //..fillStyle = 'black' 
+        //..fillStyle = 'black'
         ..beginPath()
         ..fillRect(0, 0, width, height)
         ..closePath();
   }
-  
+
   clear() {
     super.clear();
     background();
   }
-  
+
   draw() {
     clear();
     drawRect(canvas, 0, 0, width, height, color: 'black', borderColor: 'red');
-      
-   
+
+    yellowLines.moveDown();
     yellowLines.forEach((YellowLine yellowLine) {
-      yellowLine.moveDown();
-            drawPiece(yellowLine);
-          });
-  
+      drawPiece(yellowLine);
+    });
+
     if (creatures.any((Piece p) => p.isVisible)) {
       clouds.forEach((Cloud cloud) {
         cloud.move(Direction.UP);
@@ -60,7 +65,7 @@ class Board extends Surface {
       creatures.forEach((Creature creature) {
         if (creature.isVisible) {
           creature.move(Direction.DOWN);
-          //creature.x += creature.dx; 
+          //creature.x += creature.dx;
           if (creature.x < 0 || creature.x > width) {
             creature.x = randomNum(width);
           }
@@ -91,8 +96,8 @@ class Board extends Surface {
         drawPiece(laser);
       }
       drawPiece(spaceship);
-    /*} else if (spaceship.usesVideo) {   
-      invaderVideo.hidden = false; 
+    /*} else if (spaceship.usesVideo) {
+      invaderVideo.hidden = false;
       invaderVideo.play();*/
     }
   }
