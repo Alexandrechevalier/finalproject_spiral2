@@ -1,6 +1,6 @@
 part of finalproject;
 
-class Spaceship extends MovablePiece {
+class Spaceship extends Piece {
   Spaceship() {
     randomInit();
     width = 70;
@@ -12,7 +12,7 @@ class Spaceship extends MovablePiece {
   }
 }
 
-class Laser extends MovablePiece {
+class Laser extends Piece {
   Laser() {
     randomInit();
     width = 4;
@@ -27,8 +27,9 @@ class Laser extends MovablePiece {
   }
 }
 
-class Cloud extends MovablePiece {
-  Cloud(int id): super(id) {
+class Cloud extends Piece {
+  Cloud(int id) {
+    this.id = id;
     randomInit();
     width = 80;
     height = 56;
@@ -37,8 +38,9 @@ class Cloud extends MovablePiece {
   }
 }
 
-class Creature extends MovablePiece {
-  Creature(int id): super(id) {
+class Creature extends Piece {
+  Creature(int id) {
+    this.id = id;
     randomExtraInit();
     width = 48;
     height = 64;
@@ -57,30 +59,35 @@ class Creature extends MovablePiece {
   }
 }
 
-class Clouds extends MovablePieces {
-  Clouds(int count): super(count);
+class Clouds extends Pieces {
+  Clouds(int count) {
+    create(count);
+  }
 
-  createMovablePieces(int count) {
+  create(int count) {
     for (var i = 1; i <= count; i++) {
       add(new Cloud(i));
     }
   }
 }
 
-class Creatures extends MovablePieces {
-  Creatures(int count): super(count);
+class Creatures extends Pieces {
+  Creatures(int count) {
+    create(count);
+  }
 
-  createMovablePieces(int count) {
+  create(int count) {
     for (var i = 1; i <= count; i++) {
       add(new Creature(i));
     }
   }
 }
 
-class YellowLine extends MovablePiece {
+class YellowLine extends Piece {
   YellowLine nextLine;
 
-  YellowLine(int id): super(id) {
+  YellowLine(int id) {
+    this.id = id;
     width = 15;
     height = 50;
     color.main = 'yellow';
@@ -98,10 +105,12 @@ class YellowLine extends MovablePiece {
   }
  }
 
-class YellowLines extends MovablePieces {
-  YellowLines(int count): super(count);
+class YellowLines extends Pieces {
+  YellowLines(int count) {
+    create(count);
+  }
 
-  createMovablePieces(int count) {
+  create(int count) {
     var nextLine = new YellowLine(0);
     nextLine.y = -nextLine.height;
     var currentLine;

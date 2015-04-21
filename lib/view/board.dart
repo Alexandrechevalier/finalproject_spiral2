@@ -1,13 +1,14 @@
 part of finalproject;
 
 class Board extends Surface {
-  MovablePieces clouds, creatures;
-  MovablePiece laser, spaceship;
+  Pieces clouds, creatures;
+  Piece laser, spaceship;
   YellowLines yellowLines;
   AudioElement hitSound;
  // VideoElement invaderVideo; SURMENT A SUPP
 
-  Board(CanvasElement canvas): super(canvas) {
+  Board(CanvasElement canvas) {
+    this.canvas = canvas;
     clouds = new Clouds(5);
     creatures = new Creatures(7);
     spaceship = new Spaceship();
